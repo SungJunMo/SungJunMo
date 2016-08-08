@@ -1,0 +1,54 @@
+apply plugin: "java"
+apply plugin: "eclipse-wtp"
+apply plugin: "war"
+
+
+// 소스 파일의 인코딩 문자 집합을 지정한다.
+// 만약 지정하지 않으면 OS의 기본 문자 집합을 사용했다고
+// 가정 하고 컴파일 한다.
+// Windows OS는 MS949가 기본 문자 집합니다.
+//  소스 파일이 MS949로 되어 있다고 가정해 버린다.
+//즉 이걸 하지 않으면 UTF-8이 되어 있으면 다 깨진다.
+// complier한테 UTF-8로 생각하고 컴파일 하라는 것
+compileJava.options.encoding = 'UTF-8'
+
+//소스 파일의 문법 검사를 1.8기준으로 검사한다. 컴파일의 기준점 정하는 것
+sourceCompatibility = 1.8
+
+
+// 컴파일 할 때 JDK 1.8기본으로 .class 파일 만든다.
+//즉 1.8 미만 버전에서는 실행되지 않을 수 있다. 1.8이상에서 실행 된다는 것 
+targetCompatibility = 1.8
+
+
+
+//의존 라이브러리를 다운 받을 서버를 지정한다.
+repositories {
+    mavenCentral()
+}
+
+
+//의존 라이브러리 정보
+// => 라이브러리 검색 싸이트: www.mvnrepository.com
+dependencies {
+    compile 'org.springframework:spring-webmvc:4.3.1.RELEASE'
+    compile 'org.mybatis:mybatis:3.4.1'
+    compile 'org.mybatis:mybatis-spring:1.3.0'
+    compile 'mysql:mysql-connector-java:5.1.39'
+    compile 'org.springframework:spring-jdbc:4.3.1.RELEASE'
+    
+    compile 'javax.servlet:jstl:1.2'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+    
+    //OJDBC(오라클 JDBC)는 maven에서 지원하지 않기 때문에 직접 넣어 줘서 사용 해야 한다.
+    //즉 resoucese안에 libs라는 디렉토리를 생성 후 *.Jar을 capy&past 한다. 
+    //그 디렉토리 안의 lib를 추가 하라는 기술
+    compile  fileTree(dir: 'libs', include: '*.jar')
+    
+    
+    //컴파일 할 때 만 사용하고 배치에서는 제외할 라이브러리
+    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+}
+
+// maven Server에 없는 lib 추가 할 때 사용
+// compile  fileTree(dir: 'libs', include: '*.jar')

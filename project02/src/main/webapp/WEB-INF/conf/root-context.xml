@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="java83.example">
+	 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+
+<!-- classpath로 지정된 경로에 있는 properties를 읽오 오라는 것 -->
+	<context:property-placeholder
+		location="classpath:java83/example/dao/jdbc.properties" />
+
+
+  <!-- aop때 사용하는 것 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+
+	</bean>
+
+<!-- spring jdbc lib이며, 연결 정보를 가지고 있다. -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+<!-- spring-mybatis lib는 스프링과 mybatis 둘을 연결하는 lib이다. -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	
+		<!--mybatis에 jdbc명시 연결정보-->
+		<property name="dataSource" ref="dataSource" />
+		
+		<!-- mybatis에 SQL 명시, 김강사님의 mini프로젝트의 ~Mapper.xml과 같은것 -->
+		<property name="mapperLocations" value="classpath*:java83/example/dao/*Dao.xml" />
+		
+		<!-- 이클립스는 컴파일하면 패키지의 구조대로 .class를 카타리나에 만든다. 즉 
+		java 밑에 있는 java83/example과 resources밑에 있는 java83/example는 폴더 구조가 드른 곳에 있지만 컴파일을 하면
+		패키지 순으로 .class가 카타리나에 생성된다. -->
+		
+		<property name="typeAliasesPackage" value="java83.example.vo" />
+	</bean>
+
+ <!--scanning을 해서  조건이 맞는 mapper.xml과 Dao인터페이스의 구현체를 생성 (즉 Dao impl을 만들지 않아도 된다.)-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="java83.example.dao" />
+	</bean>
+
+
+</beans>

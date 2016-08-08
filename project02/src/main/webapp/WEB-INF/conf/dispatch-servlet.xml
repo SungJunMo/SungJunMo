@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc   
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+  
+  <!-- scan이란 읽어 보고 그것에 대한 것을 셋팅한다는 것 -->
+	<context:component-scan base-package="java83.example.controller">
+	 <!-- ** 패키지가 여러개에도 안된다는 것, 만약 type을 annotation을 할 경우는 annotation만 제외 된다.-->
+	 <!-- 정규 표현식(正規表現式, 영어: regular expression, 간단히 regexp 또는 regex)  -->
+	 <context:exclude-filter type="regex" expression="java83.example.controller.json.*"/>
+	</context:component-scan>
+	
+	<mvc:annotation-driven />
+
+	<!-- 기존에 이미 설치된 뷰리졸버(View Resolver,jsp 파일을 찾아 실행시키는 객체)를 WEB-INF 폴더에서 jsp 
+		파일을 찾는 뷰 리졸버로 교체하자 why? 클라이언트가 .jsp로 접근하지 못하게 WEB-INF에 넣으려고 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>
